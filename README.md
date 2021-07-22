@@ -1,6 +1,6 @@
-# Project Name
+# Azure Blob Storage Demo for .NET Core
 
-(short, 1-3 sentenced, description of the project)
+This project demonstrates how to access Azure Blob Storage from a .NET Core Razor Pages (Web) app.  It makes use of the Azure SDK package (Azure.Storage.Blobs)[https://www.nuget.org/packages/Azure.Storage.Blobs/].
 
 ## Features
 
