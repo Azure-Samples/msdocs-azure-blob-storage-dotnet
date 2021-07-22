@@ -1,0 +1,169 @@
+﻿@page "{container?}"
+@using AzureBlobStorageDemo.Models
+@using AzureBlobStorageDemo.Utilities
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Storage Blobs Demo Application</h1>
+</div>
+
+<!-- Message (if there is one) --> 
+@if (TempData.ContainsKey("Message"))
+{
+    var message = TempData.Get<MessageModel>("Message") as MessageModel;
+    
+    <div class="alert @message.Level.ToCssClass() alert-dismissible fade show" role="alert">
+        @message.Message
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">            
+        </button>
+    </div>
+}
+
+<!-- Containers header/New Container Button Row -->
+<div class="row mb-1">
+    <div class="col-md-9">
+        <h3>Containers</h3>
+    </div>
+    <div class="col-md-3 text-end">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createBlobContainerModal"><i class="fas fa-folder-plus"></i> New container</button>
+    </div>
+</div>
+
+<!--Containers Loop --> 
+@foreach (var container in Model.Containers)
+{
+    var isSelectedContainer = (Model.SelectedContainer == container.Name);
+    var iconClass = isSelectedContainer ? "fa-angle-down" : "fa-angle-right";
+    var buttonLabel = $"<i class=\"fas {iconClass}\"></i> {container.Name}";
+    <div class="d-grid mb-1">
+        <a asp-page-handler="createContainer" asp-route-container="@container.Name" class="btn btn-dark text-start fs-4 fw-bold"><i class="fas @iconClass"></i> @container.Name</a>
+    </div>
+
+    @if (isSelectedContainer)
+    {
+        <div class="px-2 mb-1">
+            @if (Model.BlobsInContainer?.Count() > 0)
+            {
+                <table class="table table-sm mb-1">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Create Date</th>
+                            <th>Content Type</th>
+                            <th>Size</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (BlobInfoModel blob in Model.BlobsInContainer)
+                        {
+                            <tr>
+                                <td>@blob.Name</td>
+                                <td>@blob.CreatedOn?.ToString("u")</td>
+                                <td>@blob.ContentType</td>
+                                <td>@blob.Size</td>
+                                <td class="text-end">
+                                    <a asp-page-handler="downloadBlob" asp-route-container="@container.Name" asp-route-blobName="blob.Name" class="btn btn-primary btn-sm"><i class="fas fa-file-download"></i> Download</a>
+
+                                    <form method="post" class="d-inline-block">
+                                        <button asp-page-handler="RemoveBlob" 
+                                            asp-route-containerName="@container.Name" asp-route-blobName="@blob.Name"
+                                            class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                  </tbody>
+              </table>
+            }
+            else
+            {
+                <p>No Blobs in this container</p>
+            }
+              <div class="row justify-content-end mb-2">         
+                <div class="col-md-5 text-end">
+                  <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#blobUploadModal">
+                    <i class="fas fa-upload"></i> Upload blob
+                  </button>            
+
+                  <form method="post" class="d-inline-block">
+                      <input type="hidden" name="containerName" value="@container.Name" />
+                      <button asp-page-handler="RemoveContainer" 
+                          class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i> Delete container</button>
+                  </form>
+
+                </div>
+              </div>
+          </div>
+    }
+}
+
+
+<!-- Create Container Dialog -->
+<div id="createBlobContainerModal" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="Post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Blob Container</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="createContainerName" class="form-label">Name</label>
+                    <input id="createContainerName" type="text" name="containerName" class="form-control" required minlength=3 maxlength=63 pattern="[a-z]{1}([a-z]|[0-9]|-){1,61}[a-z]{1}"/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="createContainer">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Upload Blob Dialog -->
+<div id="blobUploadModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <form method="post" enctype = "multipart/form-data">            
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Blob</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <input type="hidden" name="containerName" value="@Model.SelectedContainer" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="blobName" class="form-label">Name</label>
+                        <input type="text" name="blobName" class="form-control"/>                        
+                    </div>
+                    <div class="mb-3">
+                        <label for="uploadFile" class="form-label">File</label>
+                        <input name="uploadFile" type="file" class="form-control">                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" asp-page-handler="uploadBlob">Upload</button>
+                </div>
+            </div>
+        </form>
+        <!-- </form> -->
+    </div>
+</div>
+
+
+
+
+@section Css {
+    <link href="~/lib/fontawesome-free/css/all.min.css" rel="stylesheet"> <!--for FontAwesome -->
+}
