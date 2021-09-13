@@ -66,7 +66,7 @@
                                 <td>@blob.ContentType</td>
                                 <td>@blob.Size</td>
                                 <td class="text-end">
-                                    <a asp-page-handler="downloadBlob" asp-route-container="@container.Name" asp-route-blobName="blob.Name" class="btn btn-primary btn-sm"><i class="fas fa-file-download"></i> Download</a>
+                                    <a asp-page-handler="downloadBlob" asp-route-containerName="@container.Name" asp-route-blobName="@blob.Name" class="btn btn-primary btn-sm"><i class="fas fa-file-download"></i> Download</a>
 
                                     <form method="post" class="d-inline-block">
                                         <button asp-page-handler="RemoveBlob" 
