@@ -10,16 +10,17 @@ namespace AzureBlobStorageDemo.Services
     public class BlobStorageService : IBlobStorageService
     {
 
+        public void CreateContainer(string containerName)
+        {
+
+        }
+
 
         public IEnumerable<StorageContainerModel> GetContainers()
         {
             return new List<StorageContainerModel>();
         }
 
-        public void CreateContainer(string containerName)
-        {
-
-        }
 
         public void DeleteContainer(string containerName)
         {
@@ -32,6 +33,12 @@ namespace AzureBlobStorageDemo.Services
         }
 
 
+        public void UploadBlob(string containerName, string blobName, string contentType, Stream content)
+        {
+
+        }
+
+
         public BlobModel GetBlobContents(string containerName, string blobName)
         {
 
@@ -41,11 +48,6 @@ namespace AzureBlobStorageDemo.Services
                 ContentType = String.Empty,
                 Content = new MemoryStream()
             };
-        }
-
-        public void UploadBlob(string containerName, string blobName, string contentType, Stream content)
-        {
-                       
         }
 
 
