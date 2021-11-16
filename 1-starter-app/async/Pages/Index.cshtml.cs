@@ -31,7 +31,8 @@ namespace AzureBlobStorageDemo.Pages
 
         public async Task OnGet(string container = null)
         {
-            Containers = _blobStorageService.GetContainersAsync().OrderBy(c => c.Name);
+            Containers = _blobStorageService.GetContainersAsync()
+                .OrderBy(c => c.Name);
 
             if ( await Containers.AnyAsync(c => c.Name == container))
             {
@@ -106,7 +107,6 @@ namespace AzureBlobStorageDemo.Pages
         }
 
 
-
         public async Task<IActionResult> OnPostUploadBlob(string containerName, string blobName, IFormFile uploadFile)
         {
             try
@@ -123,8 +123,6 @@ namespace AzureBlobStorageDemo.Pages
             }
             return RedirectToPage("index", "Get", new { container = containerName });
         }
-
-
 
     }
 }

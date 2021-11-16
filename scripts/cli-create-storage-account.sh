@@ -1,6 +1,6 @@
-$LOCATION = 'eastus'       # use 'az account list-locations --output table' to list all locations
-$RESOURCE_GROUP_NAME = 'rg-msdocs-blob-storage-demo'
-$STORAGE_ACCOUNT_NAME = 'stblobstoragedemo123' # Replace '123' with three random numbers to get unique name  
+LOCATION='eastus'       # use 'az account list-locations --output table' to list all locations
+RESOURCE_GROUP_NAME='rg-msdocs-blob-storage-demo'
+STORAGE_ACCOUNT_NAME='stblobstoragedemo123' # Replace '123' with three random numbers to get unique name  
 
 # Create a resource group
 az group create \

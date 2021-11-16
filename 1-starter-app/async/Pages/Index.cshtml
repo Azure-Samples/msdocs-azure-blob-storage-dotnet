@@ -33,7 +33,7 @@
 </div>
 
 <!--Containers Loop --> 
-@foreach (var container in Model.Containers)
+@await foreach (var container in Model.Containers)
 {
     var isSelectedContainer = (Model.SelectedContainer == container.Name);
     var iconClass = isSelectedContainer ? "fa-angle-down" : "fa-angle-right";
@@ -45,7 +45,7 @@
     @if (isSelectedContainer)
     {
         <div class="px-2 mb-1">
-            @if (Model.BlobsInContainer?.Count() > 0)
+            @if (await Model.BlobsInContainer.CountAsync() > 0)
             {
                 <table class="table table-sm mb-1">
                     <thead>
@@ -58,7 +58,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (BlobInfoModel blob in Model.BlobsInContainer)
+                        @await foreach (BlobInfoModel blob in Model.BlobsInContainer)
                         {
                             <tr>
                                 <td>@blob.Name</td>
@@ -143,12 +143,12 @@
                         <input type="hidden" name="containerName" value="@Model.SelectedContainer" />
                     </div>
                     <div class="mb-3">
-                        <label for="blobName" class="form-label">Name</label>
-                        <input type="text" name="blobName" class="form-control"/>                        
+                        <label for="uploadFile" class="form-label">File</label>
+                        <input id="uploadFile" name="uploadFile" type="file" class="form-control">                        
                     </div>
                     <div class="mb-3">
-                        <label for="uploadFile" class="form-label">File</label>
-                        <input name="uploadFile" type="file" class="form-control">                        
+                        <label for="blobName" class="form-label">Name</label>
+                        <input id="blobName" type="text" name="blobName" class="form-control"/>                        
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -166,4 +166,16 @@
 
 @section Css {
     <link href="~/lib/fontawesome-free/css/all.min.css" rel="stylesheet"> <!--for FontAwesome -->
+}
+
+@section Scripts {
+<script>
+    $(document).ready(function(){
+        $("#uploadFile").change(function(e){
+            var filename = e.target.files[0].name;;
+            $("#blobName").val(filename);
+        });
+    });    
+
+</script>
 }

@@ -33,7 +33,7 @@
 </div>
 
 <!--Containers Loop --> 
-@await foreach (var container in Model.Containers)
+@foreach (var container in Model.Containers)
 {
     var isSelectedContainer = (Model.SelectedContainer == container.Name);
     var iconClass = isSelectedContainer ? "fa-angle-down" : "fa-angle-right";
@@ -45,7 +45,7 @@
     @if (isSelectedContainer)
     {
         <div class="px-2 mb-1">
-            @if (await Model.BlobsInContainer.CountAsync() > 0)
+            @if (Model.BlobsInContainer?.Count() > 0)
             {
                 <table class="table table-sm mb-1">
                     <thead>
@@ -58,7 +58,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @await foreach (BlobInfoModel blob in Model.BlobsInContainer)
+                        @foreach (BlobInfoModel blob in Model.BlobsInContainer)
                         {
                             <tr>
                                 <td>@blob.Name</td>
